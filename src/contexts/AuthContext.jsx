@@ -15,49 +15,60 @@ export const AuthProvider = ({ children }) => {
   // ==========================================
   // FUNKTIONEN
   // ==========================================
+
   /**
-    Login Funktion (aktuell noch Fake)
-    Wird in Block 04A durch echten API Call ersetzt!
-  */
-  const login = (username, password) => {
+   * Login Funktion (aktuell noch Fake)
+   * Wird in Block 4A durch echten API Call ersetzt!
+   *
+   * @param {string} usernameOrEmail - Username ODER Email
+   * @param {string} password - Passwort
+   */
+  const login = (usernameOrEmail, password) => {
     setIsLoading(true);
 
-    // TODO: Später durch echten API Call ersetzen
+    // TODO: Später ersetzen durch echten API Call!
     setTimeout(() => {
-      if (username && password) {
-        // Fake user erstellen
-        const fakeUSer = {
+      if (usernameOrEmail && password) {
+        // Fake User erstellen (simuliert Backend Response)
+        const fakeUser = {
           id: 1,
-          username: username,
-          email: `${username}@example.com`,
-          role: username === "admin" ? "ADMIN" : "PLAYER",
+          username: usernameOrEmail.includes("@")
+            ? usernameOrEmail.split("@")[0] // Email → Username extrahieren
+            : usernameOrEmail, // Username direkt
+          email: usernameOrEmail.includes("@")
+            ? usernameOrEmail // Ist schon Email
+            : `${usernameOrEmail}@example.com`, // Username → Fake Email
+          role:
+            usernameOrEmail === "admin" || usernameOrEmail === "admin@quiz.com"
+              ? "ADMIN"
+              : "USER", // ← Backend verwendet "USER" nicht "PLAYER"!
         };
 
-        // Fake Token erstellen
+        // Fake Token
         const fakeToken = "fake-jwt-token-" + Date.now();
 
-        setUser({ fakeUSer });
+        setUser(fakeUser);
         setToken(fakeToken);
-        console.log("Fake Login erfolgreich:", fakeUSer, fakeToken);
+        console.log("✅ Login erfolgreich (FAKE):", fakeUser);
       } else {
-        console.log("Login fehlgeschlagen: Ungültige Anmeldedaten");
+        console.error("❌ Login fehlgeschlagen");
       }
+
       setIsLoading(false);
     }, 1000);
   };
 
   /**
    * Logout Funktion
-   * Setzt den User und Token auf null
    */
   const logout = () => {
     setUser(null);
     setToken(null);
-    console.log("User ausgeloggt");
+    console.log("👋 User ausgeloggt");
   };
 
   /**
-   * Überprüft, ob der User authentifiziert ist
+   * Ist ein User eingeloggt?
    */
   const isAuthenticated = user !== null;
 
@@ -65,12 +76,12 @@ export const AuthProvider = ({ children }) => {
   // CONTEXT VALUE
   // ==========================================
   const value = {
-    // state
+    // State
     user,
     token,
     isLoading,
     isAuthenticated,
-    // funktionen
+    // Funktionen
     login,
     logout,
   };
