@@ -27,7 +27,7 @@ const Navigation = () => {
             fontSize: "14px",
           }}
         >
-          👤 {user.fakeUSer.username} ({user.fakeUSer.role})
+          👤 {user.username} ({user.role})
         </span>
       )}
     </nav>
