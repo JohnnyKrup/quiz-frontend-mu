@@ -5,13 +5,13 @@ const LoginForm = ({ onLogin }) => {
   // ==========================================
   // STATES: Formular-Daten
   // ==========================================
-  const [email, setEmail] = useState("");
+  const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
 
   // ==========================================
   // STATES: Fehler-Messages
   // ==========================================
-  const [emailError, setEmailError] = useState("");
+  const [usernameOrEmailError, setUsernameOrEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
   // ==========================================
@@ -24,40 +24,21 @@ const LoginForm = ({ onLogin }) => {
   // ==========================================
 
   /**
-   * Email validieren
-   * Regeln: Nicht leer, muss @ enthalten
+   * Username oder Email validieren (flexible!)
+   * Backend prüft ob Username oder Email - wir prüfen nur Grundsätzliches
    */
-  const validateEmail = (value) => {
-    // Regel 1: Darf nicht leer sein
+  const validateUsernameOrEmail = (value) => {
     if (!value.trim()) {
-      setEmailError("Email ist erforderlich");
+      setUsernameOrEmailError("Benutzername oder Email ist erforderlich");
       return false;
     }
 
-    // Regel 2: Muss @ enthalten
-    if (!value.includes("@")) {
-      setEmailError("Email muss @ enthalten");
+    if (value.length < 3) {
+      setUsernameOrEmailError("Mindestens 3 Zeichen erforderlich");
       return false;
     }
 
-    // Regel 3: Muss . nach @ enthalten
-    const atIndex = value.indexOf("@");
-    const dotAfterAt = value.indexOf(".", atIndex);
-    if (dotAfterAt === -1) {
-      setEmailError("Email muss einen Punkt nach dem @ enthalten");
-      return false;
-    }
-
-    // Regel 4: Muss 2-3 Zeichen nach dem letzten Punkt haben
-    const charsAfterDot = value.length - dotAfterAt - 1;
-    if (charsAfterDot < 2 || charsAfterDot > 3) {
-      setEmailError(
-        "Email muss 2-3 Zeichen nach dem Punkt haben (z.B. .ch, .com)"
-      );
-      return false;
-    }
-
-    setEmailError("");
+    setUsernameOrEmailError("");
     return true;
   };
 
@@ -69,12 +50,10 @@ const LoginForm = ({ onLogin }) => {
       setPasswordError("Passwort ist erforderlich");
       return false;
     }
-
     if (value.length < 6) {
       setPasswordError("Passwort muss mindestens 6 Zeichen haben");
       return false;
     }
-
     setPasswordError("");
     return true;
   };
@@ -82,11 +61,10 @@ const LoginForm = ({ onLogin }) => {
   // ==========================================
   // HANDLER: onChange
   // ==========================================
-
-  const handleEmailChange = (e) => {
+  const handleUsernameOrEmailChange = (e) => {
     const value = e.target.value;
-    setEmail(value);
-    if (emailError) validateEmail(value);
+    setUsernameOrEmail(value);
+    if (usernameOrEmailError) validateUsernameOrEmail(value);
   };
 
   const handlePasswordChange = (e) => {
@@ -98,16 +76,15 @@ const LoginForm = ({ onLogin }) => {
   // ==========================================
   // HANDLER: Submit
   // ==========================================
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
     // Alle Felder validieren
-    const emailOk = validateEmail(email);
+    const usernameOrEmailOk = validateUsernameOrEmail(usernameOrEmail);
     const passwordOk = validatePassword(password);
 
     // Bei Fehler abbrechen
-    if (!emailOk || !passwordOk) {
+    if (!usernameOrEmailOk || !passwordOk) {
       return;
     }
 
@@ -115,7 +92,7 @@ const LoginForm = ({ onLogin }) => {
 
     // Login-Daten an Parent weitergeben
     const loginData = {
-      email: email,
+      usernameOrEmail: usernameOrEmail,
       password: password,
     };
 
@@ -130,7 +107,6 @@ const LoginForm = ({ onLogin }) => {
   // ==========================================
   // HELPER: CSS Klasse für Input
   // ==========================================
-
   const getInputClassName = (hasError, hasValue) => {
     let className = "form-input";
     if (!hasValue) return className;
@@ -141,26 +117,27 @@ const LoginForm = ({ onLogin }) => {
   // ==========================================
   // RENDER
   // ==========================================
-
   return (
     <form onSubmit={handleSubmit} className="auth-form">
       <h2>Login</h2>
 
-      {/* EMAIL INPUT */}
+      {/* USERNAME OR EMAIL INPUT */}
       <div className="form-group">
-        <label htmlFor="email">
-          Email <span className="required">*</span>
+        <label htmlFor="usernameOrEmail">
+          Benutzername oder Email <span className="required">*</span>
         </label>
         <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={handleEmailChange}
-          placeholder="deine@email.ch"
-          className={getInputClassName(emailError, email)}
+          type="text"
+          id="usernameOrEmail"
+          value={usernameOrEmail}
+          onChange={handleUsernameOrEmailChange}
+          placeholder="admin oder admin@quiz.com"
+          className={getInputClassName(usernameOrEmailError, usernameOrEmail)}
           disabled={isLoading}
         />
-        {emailError && <span className="error-message">{emailError}</span>}
+        {usernameOrEmailError && (
+          <span className="error-message">{usernameOrEmailError}</span>
+        )}
       </div>
 
       {/* PASSWORD INPUT */}
@@ -185,7 +162,7 @@ const LoginForm = ({ onLogin }) => {
       {/* SUBMIT BUTTON */}
       <div className="form-submit">
         <Button
-          text={isLoading ? "🔄 Lädt..." : "Einloggen"}
+          text={isLoading ? "Lädt..." : "Einloggen"}
           onAnswerClick={handleSubmit}
           disabled={isLoading}
           className="submit-button"
