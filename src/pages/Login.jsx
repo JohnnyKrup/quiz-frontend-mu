@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoginForm from "../components/login-form";
-import { login } from "../services/auth-service"; // ← NEU!
+import { useAuth } from "../contexts/AuthContext"; // ← NEU: Aus Context!
 
 const Login = () => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
+  const { login } = useAuth();
 
   /**
    * Handler für Login (wird von LoginForm aufgerufen)
@@ -17,13 +18,10 @@ const Login = () => {
     try {
       console.log("🔄 Login wird gestartet...");
 
-      // API Call zum Backend
-      const response = await login(
-        loginData.usernameOrEmail,
-        loginData.password
-      );
+      // Jetzt AuthContext.login() verwenden (nicht mehr auth-service direkt!)
+      await login(loginData.usernameOrEmail, loginData.password);
 
-      console.log("✅ Login erfolgreich:", response);
+      console.log("✅ Login erfolgreich");
 
       // Erfolg! Redirect zu Quiz
       navigate("/quiz");
@@ -87,11 +85,11 @@ const Login = () => {
           <br />
           <strong>Normaler User:</strong>
           <br />
-          Username: user
+          Username: player1
           <br />
-          Email: user@quiz.com
+          Email: player1@quiz.com
           <br />
-          Passwort: user123
+          Passwort: player123
         </div>
       </div>
     </div>

@@ -9,17 +9,37 @@ import Rules from "./pages/Rules";
 import Login from "./pages/Login";
 import PageNotFound from "./pages/PageNotFound";
 import Layout from "./components/layout";
+import Forbidden from "./pages/Forbidden"; // ← NEU
+import ProtectedRoute from "./components/protected-route"; // ← NEU
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
-        <Route path="/quiz" element={<Game />} />
-        <Route path="/admin" element={<QuestionManager />} />
-        <Route path="/regeln" element={<Rules />} />
-        <Route path="/blabli" element={<Impressum />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="login" element={<Login />} />
+        <Route path="regeln" element={<Rules />} />
+        <Route path="blabli" element={<Impressum />} />
+        <Route path="forbidden" element={<Forbidden />} /> {/* ← NEU */}
+        {/* Geschützte Routen */}
+        <Route
+          path="quiz"
+          element={
+            <ProtectedRoute>
+              <Game />
+            </ProtectedRoute>
+          }
+        />
+        {/* Admin-geschützte Route */}
+        <Route
+          path="admin"
+          element={
+            <ProtectedRoute requiredRole="ADMIN">
+              <QuestionManager />
+            </ProtectedRoute>
+          }
+        />
+        {/* 404 Seite */}
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
