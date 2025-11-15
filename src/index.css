@@ -632,6 +632,54 @@ button:focus-visible {
   color: #dc3545;
 }
 
+/* ==========================================
+   NAVIGATION USER INFO & LOGOUT
+   ========================================== */
+
+.nav-user-info {
+  display: inline-block;
+  margin-left: 20px;
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.nav-logout-btn {
+  margin-left: 10px;
+  padding: 5px 12px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.nav-logout-btn:hover {
+  background: #5a6268;
+}
+
+.nav-logout-btn:active {
+  background: #545b62;
+}
+
+/* Responsive: Kleinere Screens */
+@media (max-width: 768px) {
+  .nav-user-info {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  .nav-logout-btn {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+}
+
 /* If you want the "Question / Statement" column to potentially take more space
    or have specific alignment if text is short, you can target it.
    The grid-template-columns already gives it more space (3fr).
